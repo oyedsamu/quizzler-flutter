@@ -6,6 +6,7 @@ class Quizzler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.grey.shade900,
         body: SafeArea(
@@ -25,16 +26,92 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Icon> scorekeeper = [
-    Icon(
-      Icons.check,
-      color: Colors.green,
-    ),
-    Icon(
-      Icons.close,
-      color: Colors.red,
-    ),
+  markTrue() {
+    setState(() {
+      if (questionNumber < questions.length - 1) {
+        if (answers[questionNumber] == true) {
+          scorekeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+          questionNumber++;
+          rightScore++;
+        } else {
+          scorekeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+          questionNumber++;
+          wrongScore++;
+        }
+      } else if (questionNumber == questions.length - 1) {
+        if (answers[questionNumber] == true) {
+          scorekeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+          questionNumber = 0;
+        } else {
+          scorekeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+          questionNumber = 0;
+        }
+        rightScore = 0;
+        wrongScore = 0;
+      }
+    });
+  }
+
+  markFalse() {
+    setState(() {
+      if (questionNumber < questions.length - 1) {
+        if (answers[questionNumber] == false) {
+          scorekeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+          questionNumber++;
+          rightScore++;
+        } else {
+          scorekeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+          questionNumber++;
+          wrongScore++;
+        }
+      } else if (questionNumber == questions.length - 1) {
+        if (answers[questionNumber] == false) {
+          scorekeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+          questionNumber = 0;
+        } else {
+          scorekeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+          questionNumber = 0;
+        }
+        rightScore = 0;
+        wrongScore = 0;
+      }
+    });
+  }
+
+  List<Icon> scorekeeper = [];
+  List<String> questions = [
+    'You can lead a cow down stairs but not up stairs.',
+    'Approximately one quarter of human bones are in the feet.',
+    'A slug\'s blood is green.'
   ];
+  List<bool> answers = [false, true, true];
+  int questionNumber = 0;
+  int rightScore = 0;
+  int wrongScore = 0;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -47,7 +124,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                questions[questionNumber],
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -71,12 +148,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                setState(() {
-                  scorekeeper.add(Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  ));
-                });
+                markTrue();
               },
             ),
           ),
@@ -94,19 +166,84 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                setState(() {
-                  scorekeeper.add(Icon(
-                    Icons.check,
-                    color: Colors.red,
-                  ));
-                });
+                markFalse();
+//                setState(() {
+//                  scorekeeper.add(Icon(
+//                    Icons.check,
+//                    color: Colors.red,
+//                  ));
+//                  if (questionNumber < 2) {
+//                    questionNumber = questionNumber + 1;
+//                  } else
+//                    questionNumber = 0;
+//                });
               },
             ),
           ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: FlatButton(
+                textColor: Colors.white,
+                color: Colors.green,
+                child: Text(
+                  'Score: ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+                onPressed: () {
+                  markTrue();
+                },
+              ),
+            ),
+            SizedBox(
+              width: 20.0,
+            ),
+            Icon(
+              Icons.check,
+              color: Colors.green,
+            ),
+            Text(
+              '$rightScore',
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 40.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              width: 25.0,
+            ),
+            Icon(
+              Icons.close,
+              color: Colors.red,
+            ),
+            Text(
+              '$wrongScore',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 40.0,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: scorekeeper,
+        ),
+        Text(
+          'That\'s all! You scored $rightScore out of ${questions.length} Questions',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontStyle: FontStyle.italic,
+          ),
         )
       ],
     );
